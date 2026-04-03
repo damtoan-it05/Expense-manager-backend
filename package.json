@@ -1,0 +1,26 @@
+{
+  "name": "expense-manager-backend",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "expmanage"
+  ],
+  "homepage": "https://github.com/damtoan-it05/Expense-manager-backend#readme",
+  "bugs": {
+    "url": "https://github.com/damtoan-it05/Expense-manager-backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damtoan-it05/Expense-manager-backend.git"
+  },
+  "license": "ISC",
+  "author": "toandt",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
