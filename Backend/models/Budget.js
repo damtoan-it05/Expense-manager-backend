@@ -42,7 +42,7 @@ const budgetSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// One budget per user per category per month/year
+// Đảm bảo: Mỗi user, trong 1 tháng, 1 năm, chỉ có 1 ngân sách cho 1 danh mục.
 budgetSchema.index({ userId: 1, categoryId: 1, month: 1, year: 1 }, { unique: true });
 
 module.exports = mongoose.model('Budget', budgetSchema);

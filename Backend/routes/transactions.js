@@ -6,7 +6,7 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect);
 
-// ─── GET /api/transactions ────────────────────────────────────────────────────
+// ─── GET /api/transactions Lấy danh sách giao dịch ────────────────────────────────────────────────────
 // Query: ?type=income|expense &categoryId= &startDate= &endDate= &page= &limit=
 router.get('/', async (req, res) => {
   try {
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ─── POST /api/transactions ───────────────────────────────────────────────────
+// ─── POST /api/transactions Tạo giao dịch mới ───────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
     const { type, amount, categoryId, date, note } = req.body;
@@ -83,7 +83,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ─── GET /api/transactions/:id ────────────────────────────────────────────────
+// ─── GET /api/transactions/:id Xem chi tiết 1 giao dịch ────────────────────────────────────────────────
 router.get('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findOne({
@@ -100,7 +100,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ─── PUT /api/transactions/:id ────────────────────────────────────────────────
+// ─── PUT /api/transactions/:id Cập nhật giao dịch ────────────────────────────────────────────────
 router.put('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findOne({
@@ -143,7 +143,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ─── DELETE /api/transactions/:id ─────────────────────────────────────────────
+// ─── DELETE /api/transactions/:id Xóa giao dịch ─────────────────────────────────────────────
 router.delete('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findOneAndDelete({

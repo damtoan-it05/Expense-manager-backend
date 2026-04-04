@@ -7,10 +7,10 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect);
 
-// Helper: calculate spent amount for a budget
+// tính toán tổng chi tiêu của user trong 1 category ở 1 tháng nhất định
 const getSpentAmount = async (userId, categoryId, month, year) => {
   const start = new Date(year, month - 1, 1);
-  const end = new Date(year, month, 0, 23, 59, 59, 999); // last day of month
+  const end = new Date(year, month, 0, 23, 59, 59, 999); // ngày cuối tháng
 
   const result = await Transaction.aggregate([
     {
@@ -27,8 +27,8 @@ const getSpentAmount = async (userId, categoryId, month, year) => {
   return result[0]?.total || 0;
 };
 
-// ─── GET /api/budgets ─────────────────────────────────────────────────────────
-// Query: ?month=&year=  (defaults to current month/year)
+// ─── GET /api/budgets Lấy danh sách ngân sách ──────────────────────────────────────
+// Query: ?month=&year=  (mặc định hiện tại month/year)
 router.get('/', async (req, res) => {
   try {
     const now = new Date();
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
       year,
     }).populate('categoryId', 'name type icon color');
 
-    // Attach spent amount and alert status to each budget
+    // Đính kèm số tiền chi tiêu và trạng thái cảnh báo cho từng ngân sách
     const budgetsWithStatus = await Promise.all(
       budgets.map(async (budget) => {
         const spent = await getSpentAmount(req.user._id, budget.categoryId._id, month, year);
@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ─── POST /api/budgets ────────────────────────────────────────────────────────
+// ─── POST /api/budgets Tạo ngân sách mới ────────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
     const { categoryId, month, year, limitAmount, alertThreshold } = req.body;
@@ -75,7 +75,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, message: 'categoryId, month, year, and limitAmount are required' });
     }
 
-    // Verify category is an expense category
+    // Xác minh danh mục là một danh mục chi phí thuộc về user hoặc là danh mục mặc định
     const category = await Category.findOne({
       _id: categoryId,
       type: 'expense',
@@ -104,7 +104,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ─── PUT /api/budgets/:id ─────────────────────────────────────────────────────
+// ─── PUT /api/budgets/:id Cập nhật ngân sách ─────────────────────────────────────────────────────
 router.put('/:id', async (req, res) => {
   try {
     const budget = await Budget.findOne({ _id: req.params.id, userId: req.user._id });
@@ -127,7 +127,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ─── DELETE /api/budgets/:id ──────────────────────────────────────────────────
+// ─── DELETE /api/budgets/:id Xóa ngân sách ──────────────────────────────────────────────────
 router.delete('/:id', async (req, res) => {
   try {
     const budget = await Budget.findOneAndDelete({ _id: req.params.id, userId: req.user._id });
@@ -141,8 +141,8 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// ─── GET /api/budgets/alerts ──────────────────────────────────────────────────
-// Returns all active budgets in current month that have exceeded alertThreshold
+// ─── GET /api/budgets/alerts Lấy danh sách cảnh báo ──────────────────────────────────────────────────
+// Trả về tất cả ngân sách đang hoạt động trong tháng hiện tại đã vượt quá ngưỡng cảnh báo
 router.get('/alerts', async (req, res) => {
   try {
     const now = new Date();

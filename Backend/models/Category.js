@@ -15,7 +15,7 @@ const categorySchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      default: null, // null = default/system category
+      default: null, // null = danh mục mặc định của hệ thống
     },
     icon: {
       type: String,
@@ -34,7 +34,7 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// A user cannot have two categories with the same name & type
+// Mỗi user không thể tạo 2 danh mục cùng tên và cùng loại
 categorySchema.index({ name: 1, type: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Category', categorySchema);

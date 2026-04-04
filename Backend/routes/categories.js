@@ -5,12 +5,12 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect);
 
-// Helper: get categories visible to the current user (default + own)
+//  nhận các danh mục hiển thị cho người dùng hiện tại (mặc định + riêng)
 const getUserCategories = (userId) => ({
   $or: [{ isDefault: true }, { userId }],
 });
 
-// ─── GET /api/categories ──────────────────────────────────────────────────────
+// ─── GET /api/categories Lấy danh sách danh mục ──────────────────────────────────────────────────────
 // Query: ?type=income|expense
 router.get('/', async (req, res) => {
   try {
@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ─── POST /api/categories ─────────────────────────────────────────────────────
+// ─── POST /api/categories Tạo danh mục mới ─────────────────────────────────────────────────────
 router.post('/', async (req, res) => {
   try {
     const { name, type, icon, color } = req.body;
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ─── GET /api/categories/:id ──────────────────────────────────────────────────
+// ─── GET /api/categories/:id Xem chi tiết 1 danh mục ──────────────────────────────────────────────────
 router.get('/:id', async (req, res) => {
   try {
     const category = await Category.findOne({
@@ -68,7 +68,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ─── PUT /api/categories/:id ──────────────────────────────────────────────────
+// ─── PUT /api/categories/:id Cập nhật danh mục ──────────────────────────────────────────────────
 router.put('/:id', async (req, res) => {
   try {
     const category = await Category.findOne({ _id: req.params.id, userId: req.user._id });
@@ -89,7 +89,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ─── DELETE /api/categories/:id ───────────────────────────────────────────────
+// ─── DELETE /api/categories/:id Xóa danh mục ───────────────────────────────────────────────
 router.delete('/:id', async (req, res) => {
   try {
     const category = await Category.findOne({ _id: req.params.id, userId: req.user._id });

@@ -5,7 +5,7 @@ const { protect } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect);
 
-// ─── GET /api/statistics/summary ─────────────────────────────────────────────
+// ─── GET /api/statistics/summary Tổng quan thu chi ─────────────────────────────────────────────
 // Query: ?period=weekly|monthly|yearly &month=&year=&week=
 router.get('/summary', async (req, res) => {
   try {
@@ -70,7 +70,7 @@ router.get('/summary', async (req, res) => {
   }
 });
 
-// ─── GET /api/statistics/by-category ─────────────────────────────────────────
+// ─── GET /api/statistics/by-category Thống kê theo danh mục ─────────────────────────────────────────
 // Query: ?type=income|expense &period=weekly|monthly|yearly &month=&year=&week=
 router.get('/by-category', async (req, res) => {
   try {
@@ -143,7 +143,7 @@ router.get('/by-category', async (req, res) => {
   }
 });
 
-// ─── GET /api/statistics/trend ────────────────────────────────────────────────
+// ─── GET /api/statistics/trend Xu hướng theo tháng ────────────────────────────────────────────────
 // Monthly income vs expense trend for a given year
 // Query: ?year=
 router.get('/trend', async (req, res) => {
@@ -191,7 +191,7 @@ router.get('/trend', async (req, res) => {
   }
 });
 
-// ─── Utility: ISO week helpers ────────────────────────────────────────────────
+// ─── Utility: ISO Hàm helper xử lý tuần ────────────────────────────────────────────────
 function getISOWeek(date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
   const dayNum = d.getUTCDay() || 7;

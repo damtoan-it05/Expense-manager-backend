@@ -10,7 +10,7 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
 
-// ─── POST /api/auth/register ──────────────────────────────────────────────────
+// ─── POST /api/auth/register đăng ký tài khoản ───────────────────────────
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -34,7 +34,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// ─── POST /api/auth/login ─────────────────────────────────────────────────────
+// ─── POST /api/auth/login đăng nhập ──────────────────────────────────────
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Invalid email or password' });
     }
 
-    // Update lastLogin
+    // cập nhật lastLogin mỗi khi người dùng đăng nhập thành công
     user.lastLogin = new Date();
     await user.save({ validateBeforeSave: false });
 
@@ -59,12 +59,12 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// ─── GET /api/auth/me ─────────────────────────────────────────────────────────
+// ─── GET /api/auth/me Lấy thông tin cá nhân ────────────────────────────────────
 router.get('/me', protect, async (req, res) => {
   res.json({ success: true, user: req.user });
 });
 
-// ─── PATCH /api/auth/change-password ─────────────────────────────────────────
+// ─── PATCH /api/auth/change-password Đổi mật khẩu ────────────────────────
 router.patch('/change-password', protect, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;

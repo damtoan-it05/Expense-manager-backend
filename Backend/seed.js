@@ -23,7 +23,7 @@ const defaultCategories = [
   { name: 'Giải trí',        type: 'expense', icon: 'music',        color: '#ec4899', isDefault: true },
   { name: 'Hóa đơn', type: 'expense', icon: 'zap',      color: '#f59e0b', isDefault: true },
 ];
-
+// cài đặt mặc định danh mục thu nhập và danh mục chi tiêu cho người dùng mới, giúp họ dễ dàng bắt đầu mà không phải tạo danh mục từ đầu.
 async function seed() {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ExpenseManageDB');

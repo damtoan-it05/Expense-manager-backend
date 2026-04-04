@@ -24,12 +24,12 @@ app.use('/api/budgets',      budgetRoutes);
 app.use('/api/statistics',   statisticsRoutes);
 app.use('/api/admin',        adminRoutes);
 
-// ─── Health check ─────────────────────────────────────────────────────────────
+// ─── kiểm tra server có hoạt động không: ─────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({ message: 'Expense Manager API is running 🚀' });
 });
 
-// ─── Global error handler ─────────────────────────────────────────────────────
+// ─── bắt lỗi toàn cục ─────────────────────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
@@ -38,7 +38,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Connect DB & start server ────────────────────────────────────────────────
+// ─── Kết nối DB & khời động server ────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ExpenseManageDB';
 

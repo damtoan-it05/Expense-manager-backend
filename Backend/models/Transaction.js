@@ -25,7 +25,7 @@ const transactionSchema = new mongoose.Schema(
     date: {
       type: Date,
       required: [true, 'Date is required'],
-      default: Date.now,
+      default: Date.now,// mặc định là ngày hiện tại nếu không cung cấp
     },
     note: {
       type: String,
@@ -36,7 +36,7 @@ const transactionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Index for fast queries by user + date
+// Tăng tốc các câu query lấy giao dịch của 1 user theo thời gian giảm dần (mới nhất trước)
 transactionSchema.index({ userId: 1, date: -1 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

@@ -6,7 +6,7 @@ const { protect, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect, adminOnly);
 
-// ─── GET /api/admin/users ─────────────────────────────────────────────────────
+// ─── GET /api/admin/users Lấy danh sách users──────────────────
 // Query: ?page=&limit=&search=
 router.get('/users', async (req, res) => {
   try {
@@ -44,7 +44,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// ─── GET /api/admin/users/:id ─────────────────────────────────────────────────
+// ─── GET /api/admin/users/:id Xem chi tiết 1 user ────────────────────────
 router.get('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
@@ -52,7 +52,7 @@ router.get('/users/:id', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Basic stats for the user
+    // thống kê tổng thu nhập, chi tiêu và số lượng giao dịch của user này
     const [incomeData, expenseData] = await Promise.all([
       Transaction.aggregate([
         { $match: { userId: user._id, type: 'income' } },
@@ -80,7 +80,7 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-// ─── PATCH /api/admin/users/:id/role ─────────────────────────────────────────
+// ─── PATCH /api/admin/users/:id/role Đổi quyền user ─────────────────────
 router.patch('/users/:id/role', async (req, res) => {
   try {
     const { role } = req.body;
@@ -104,7 +104,7 @@ router.patch('/users/:id/role', async (req, res) => {
   }
 });
 
-// ─── GET /api/admin/stats ─────────────────────────────────────────────────────
+// ─── GET /api/admin/stats Thống kê toàn hệ thống ────────────────────────
 router.get('/stats', async (req, res) => {
   try {
     const [totalUsers, totalTransactions, revenueData] = await Promise.all([
