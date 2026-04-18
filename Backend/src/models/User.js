@@ -36,22 +36,21 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Hash mật khẩu trước khi lưu
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next(); // Nếu password không đổi thì bỏ qua
-  this.password = await bcrypt.hash(this.password, 12);// Hash password với bcrypt, salt rounds = 12
-  next();
+// Hash password before saving
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
+  this.password = await bcrypt.hash(this.password, 12);
 });
 
-// So sánh mật khẩu khi đăng nhập
+// Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Ẩn password khi trả về JSON
+// Remove password from JSON output
 userSchema.methods.toJSON = function () {
   const obj = this.toObject();
-  delete obj.password;// Xóa trường password
+  delete obj.password;
   return obj;
 };
 
