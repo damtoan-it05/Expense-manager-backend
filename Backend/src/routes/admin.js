@@ -6,7 +6,7 @@ const { protect, adminOnly } = require('../middleware/auth');
 const router = express.Router();
 router.use(protect, adminOnly);
 
-// ─── GET /api/admin/users Lấy danh sách users──────────────────
+// ─── GET /api/admin/users ─────────────────────────────────────────────────────
 // Query: ?page=&limit=&search=
 router.get('/users', async (req, res) => {
   try {
@@ -44,7 +44,7 @@ router.get('/users', async (req, res) => {
   }
 });
 
-// ─── GET /api/admin/users/:id Xem chi tiết 1 user ────────────────────────
+// ─── GET /api/admin/users/:id ─────────────────────────────────────────────────
 router.get('/users/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
@@ -52,7 +52,7 @@ router.get('/users/:id', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // thống kê tổng thu nhập, chi tiêu và số lượng giao dịch của user này
+    // Basic stats for the user
     const [incomeData, expenseData] = await Promise.all([
       Transaction.aggregate([
         { $match: { userId: user._id, type: 'income' } },
@@ -80,7 +80,7 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-// ─── PATCH /api/admin/users/:id/role Đổi quyền user ─────────────────────
+// ─── PATCH /api/admin/users/:id/role ─────────────────────────────────────────
 router.patch('/users/:id/role', async (req, res) => {
   try {
     const { role } = req.body;
@@ -104,7 +104,47 @@ router.patch('/users/:id/role', async (req, res) => {
   }
 });
 
-// ─── GET /api/admin/stats Thống kê toàn hệ thống ────────────────────────
+// ─── DELETE /api/admin/users/:id ──────────────────────────────────────────────
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Không cho phép admin tự xóa chính mình
+    if (userId === req.user._id.toString()) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own account' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Xóa tất cả dữ liệu liên quan của user
+    const Category = require('../models/Category');
+    const Budget = require('../models/Budget');
+ 
+    const deleteResults = await Promise.all([
+      Transaction.deleteMany({ userId: userId }),
+      Budget.deleteMany({ userId: userId }),
+      Category.deleteMany({ userId: userId, isDefault: false }),
+      user.deleteOne(),
+    ]);
+ 
+    res.json({
+      success: true,
+      message: `User ${user.username} and all related data deleted successfully`,
+      deleted: {
+        transactions: deleteResults[0].deletedCount,
+        budgets: deleteResults[1].deletedCount,
+        categories: deleteResults[2].deletedCount,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ─── GET /api/admin/stats ─────────────────────────────────────────────────────
 router.get('/stats', async (req, res) => {
   try {
     const [totalUsers, totalTransactions, revenueData] = await Promise.all([
